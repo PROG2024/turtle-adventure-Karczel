@@ -319,6 +319,8 @@ class ChasingEnemy(Enemy):
     Chasing enemy
     """
 
+    #to get a smoother path, store data about player's location and delay to get a smoother output
+
     def __init__(self,
                  game: "TurtleAdventureGame",
                  size: int,
@@ -388,16 +390,47 @@ class FencingEnemy(Enemy):
     def __init__(self,
                  game: "TurtleAdventureGame",
                  size: int,
-                 color: str):
+                 color: str, offset):
         super().__init__(game, size, color)
         self.__id = None
+        self.__move = None
+        self.offset = offset
 
     def create(self) -> None:
         self.__id = self.canvas.create_oval(0,0,0,0, fill=self.color)
 
-    def update(self) -> None:
+    def right(self):
         self.x += 1
+
+    def left(self):
+        self.x -= 1
+
+    def up(self):
         self.y += 1
+
+    def down(self):
+        self.y -= 1
+
+    def move_till(self):
+        if self.x == self.game.home.x + self.offset \
+                and self.y == self.game.home.y + self.offset:
+            self.__move = self.down
+
+        if self.x == self.game.home.x + self.offset \
+                and self.y == self.game.home.y - self.offset:
+            self.__move = self.left
+
+        if self.x == self.game.home.x - self.offset \
+                and self.y == self.game.home.y - self.offset:
+            self.__move = self.up
+
+        if self.x == self.game.home.x - self.offset \
+                and self.y == self.game.home.y + self.offset:
+            self.__move = self.right
+        self.__move()
+
+    def update(self) -> None:
+        self.move_till()
         if self.hits_player():
             self.game.game_over_lose()
 
@@ -491,9 +524,16 @@ class EnemyGenerator:
         #     new_enemy.x = 100
         #     new_enemy.y = 100
         #     self.game.add_element(new_enemy)
-        new_enemy = ChasingEnemy(self.__game, 20, "red")
-        new_enemy.x = 100
-        new_enemy.y = 100
+        offset = 10
+        new_enemy = FencingEnemy(self.__game, 10, "red", offset)
+        new_enemy.x = self.game.home.x + offset
+        new_enemy.y = self.game.home.y + offset
+        self.game.add_element(new_enemy)
+
+        offset = 50
+        new_enemy = FencingEnemy(self.__game, 10, "red", offset)
+        new_enemy.x = self.game.home.x + offset
+        new_enemy.y = self.game.home.y + offset
         self.game.add_element(new_enemy)
 
 
