@@ -1,0 +1,55 @@
+{
+  "1" : [
+  ],
+  "2" : [
+    {"Enemy":"RandomWalkEnemy", "speed":30, "spawn": 1}
+  ],
+  "3" : [
+    {"Enemy":"RandomWalkEnemy", "speed":30, "spawn": 1},
+    {"Enemy":"ChasingEnemy", "speed":30, "spawn": 1}
+  ],
+  "4" : [
+    {"Enemy":"RandomWalkEnemy", "speed":30, "spawn": 1},
+    {"Enemy":"ChasingEnemy", "speed":30, "spawn": 1},
+    {"Enemy":"FencingEnemy", "speed":30, "spawn": 1}
+  ],
+  "5" : [
+    {"Enemy":"RandomWalkEnemy", "speed":30, "spawn": 1},
+    {"Enemy":"ChasingEnemy", "speed":30, "spawn": 1},
+    {"Enemy":"FencingEnemy", "speed":30, "spawn": 1},
+    {"Enemy":"MyEnemy", "speed":30, "spawn": 1, "cooldown": 10}
+
+  ],
+  "6" : [
+    {"Enemy":"RandomWalkEnemy", "speed":30, "spawn": 5},
+    {"Enemy":"ChasingEnemy", "speed":30, "spawn": 2},
+    {"Enemy":"FencingEnemy", "speed":30, "spawn": 1},
+    {"Enemy":"MyEnemy", "speed":30, "spawn": 1, "cooldown": 10}
+
+  ],
+  "7" : [
+    {"Enemy":"RandomWalkEnemy", "speed":30, "spawn": 6},
+    {"Enemy":"ChasingEnemy", "speed":30, "spawn": 3},
+    {"Enemy":"FencingEnemy", "speed":30, "spawn": 1},
+    {"Enemy":"MyEnemy", "speed":30, "spawn": 1, "cooldown": 10}
+
+  ],
+  "8" : [
+    {"Enemy":"RandomWalkEnemy", "speed":30, "spawn": 7},
+    {"Enemy":"ChasingEnemy", "speed":30, "spawn": 3},
+    {"Enemy":"FencingEnemy", "speed":30, "spawn": 2},
+    {"Enemy":"MyEnemy", "speed":30, "spawn": 1, "cooldown": 10}
+  ],
+  "9" : [
+    {"Enemy":"RandomWalkEnemy", "speed":30, "spawn": 8},
+    {"Enemy":"ChasingEnemy", "speed":30, "spawn": 4},
+    {"Enemy":"FencingEnemy", "speed":30, "spawn": 3},
+    {"Enemy":"MyEnemy", "speed":30, "spawn": 1, "cooldown": 5}
+  ],
+  "10" : [
+    {"Enemy":"RandomWalkEnemy", "speed":30, "spawn": 10},
+    {"Enemy":"ChasingEnemy", "speed":30, "spawn": 5},
+    {"Enemy":"FencingEnemy", "speed":30, "spawn": 4},
+    {"Enemy":"MyEnemy", "speed":30, "spawn": 1, "cooldown": 5}
+  ]
+}
