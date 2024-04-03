@@ -240,9 +240,9 @@ class Enemy(TurtleGameElement):
         Check whether the enemy is hitting the player
         """
         return (
-            (self.x - self.size/2 < self.game.player.x < self.x + self.size/2)
+            (self.x - self.size/2 <= self.game.player.x <= self.x + self.size/2)
             and
-            (self.y - self.size/2 < self.game.player.y < self.y + self.size/2)
+            (self.y - self.size/2 <= self.game.player.y <= self.y + self.size/2)
         )
 
 
@@ -296,7 +296,7 @@ class RandomWalkEnemy(Enemy):
         self.__id = None
 
     def create(self) -> None:
-        self.__id = self.canvas.create_oval(0,0,0,0, fill="red")
+        self.__id = self.canvas.create_oval(0,0,0,0, fill=self.color)
 
     def update(self) -> None:
         self.x += 1
@@ -325,13 +325,48 @@ class ChasingEnemy(Enemy):
                  color: str):
         super().__init__(game, size, color)
         self.__id = None
+        if self.game.player.x < self.x:
+            self.__state_x = self.state_move_right
+        else:
+            self.__state_x = self.state_move_left
+        if self.game.player.y < self.y:
+            self.__state_y = self.state_move_up
+        else:
+            self.__state_y = self.state_move_down
 
     def create(self) -> None:
-        self.__id = self.canvas.create_oval(0,0,0,0, fill="red")
+        self.__id = self.canvas.create_oval(0,0,0,0, fill=self.color)
+
+    def state_move_right(self):
+        # self.move_to(self.x + self.speed, self.y)
+        self.x += 1
+        if self.x > self.game.player.x: # hit the right border
+            self.__state_x = self.state_move_left
+        # order affects speed of animation,
+        # if put if in front the output will be slower
+
+    def state_move_left(self):
+        # self.move_to(self.x - self.speed, self.y)
+        self.x -= 1
+        if self.x <= self.game.player.x: #hit the left border
+            self.__state_x = self.state_move_right
+
+    def state_move_up(self):
+        # self.move_to(self.x , self.y + self.speed)
+        self.y += 1
+        if self.y > self.game.player.y: #hit the upper border
+            self.__state_y = self.state_move_down
+
+    def state_move_down(self):
+        self.y -= 1
+        # self.move_to(self.x, self.y - self.speed)
+        if self.y <= self.game.player.y: #hit the left border
+            self.__state_y = self.state_move_up
 
     def update(self) -> None:
-        self.x += 1
-        self.y += 1
+        self.__state_x()
+        self.__state_y()
+
         if self.hits_player():
             self.game.game_over_lose()
 
@@ -392,7 +427,7 @@ class MyEnemy(Enemy):
         self.__id = None
 
     def create(self) -> None:
-        self.__id = self.canvas.create_oval(0,0,0,0, fill="red")
+        self.__id = self.canvas.create_oval(0,0,0,0, fill=self.color)
 
     def update(self) -> None:
         self.x += 1
@@ -456,7 +491,7 @@ class EnemyGenerator:
         #     new_enemy.x = 100
         #     new_enemy.y = 100
         #     self.game.add_element(new_enemy)
-        new_enemy = RandomWalkEnemy(self.__game, 20, "red")
+        new_enemy = ChasingEnemy(self.__game, 20, "red")
         new_enemy.x = 100
         new_enemy.y = 100
         self.game.add_element(new_enemy)
