@@ -6,6 +6,7 @@ from turtle import RawTurtle
 from gamelib import Game, GameElement
 import json
 from datetime import datetime
+import random
 
 f = open('Level.json')
 level_data = json.load(f)
@@ -175,7 +176,11 @@ class Player(TurtleGameElement):
     def update(self) -> None:
         # check if player has arrived home
         if self.game.home.contains(self.x, self.y):
-            self.game.game_over_win()
+            if self.game.level > 10:
+                self.game.level += 1
+            else:
+                self.game.game_over_win()
+                
         turtle = self.__turtle
         waypoint = self.game.waypoint
         if self.game.waypoint.is_active:
@@ -464,7 +469,7 @@ class PowerTwoEnemy(Enemy):
     def __init__(self,
                  game: "TurtleAdventureGame",
                  size: int,
-                 color: str,cooldown, speed):
+                 color: str, cooldown, speed):
         super().__init__(game, size, color, speed)
         self.__id = None
         self.__time = datetime.now().timestamp()
@@ -510,9 +515,9 @@ class PowerTwoEnemy(Enemy):
     def update(self) -> None:
         self.__state_x()
         self.__state_y()
-        if (datetime.now().timestamp()-self.__time) >= self.__cooldown:
+        if (datetime.now().timestamp() - self.__time) >= self.__cooldown:
             new_enemy = PowerTwoEnemy(self.game, self.size, self.color, self.__cooldown, self.speed)
-            #I wanted it to be directly behind the original enemy, but good enough
+            # I wanted it to be directly behind the original enemy, but good enough
             if self.game.player.x - self.x < 0:
                 new_enemy.x = self.x + 50
             elif self.game.player.x - self.x == 0:
@@ -541,6 +546,7 @@ class PowerTwoEnemy(Enemy):
         pass
 
     # +detect collision with other enemies
+
 
 # TODO
 # Complete the EnemyGenerator class by inserting code to generate enemies
@@ -581,66 +587,47 @@ class EnemyGenerator:
         """
         Create a new enemy, possibly based on the game level
         """
-        # new_enemy = DemoEnemy(self.__game, 20, "red")
-        # for in data[str(self.__level)]:
-        #     if == "RandomWalkEnemy":
-        #         new_enemy = RandomWalkEnemy(self.__game, 20, "red")
-        #     new_enemy.x = 100
-        #     new_enemy.y = 100
-        #     self.game.add_element(new_enemy)
-        # offset = 10
-        # new_enemy = FencingEnemy(self.__game, 10, "red", offset)
-        # new_enemy.x = self.game.home.x + offset
-        # new_enemy.y = self.game.home.y + offset
-        # self.game.add_element(new_enemy)
-        #
-        # offset = 50
-        # new_enemy = FencingEnemy(self.__game, 10, "red", offset)
-        # new_enemy.x = self.game.home.x + offset
-        # new_enemy.y = self.game.home.y + offset
-        # self.game.add_element(new_enemy)
-
-        new_enemy = PowerTwoEnemy(self.__game, 20, "red", 5, 1)
-        new_enemy.x = 100
-        new_enemy.y = 100
-        self.game.add_element(new_enemy)
-
-        for i in level_data:  # iterating through dict, ti get data use data[i]
-            print(i, end=" : \n")
-            for j in level_data[i]:  # iterating through list
-                for k in j: #j == 1 element of level list
-                    print(k, end=': ')
-                    print(j[k])
-                print()
-            print()
 
         level = level_data[str(self.__level)]
         for j in level:
             enemy = j['Enemy']
             speed = j['speed']
             spawn = j['spawn']
-            for i in spawn:
+            for i in range(spawn):
                 if enemy == "RandomWalkEnemy":
                     new_enemy = RandomWalkEnemy(self.__game, 20, "red", speed)
-                    x = randint()
-                    y = randint()
-                    while x in range(self.game.player.x)
-                        and y in range(self.game.player.y):
-                        x = randint()
-                        y = randint()
+                    x = random.randint(0, self.game.canvas.winfo_width())
+                    y = random.randint(0, self.game.canvas.winfo_height())
+                    while x in range(int(self.game.player.x - 100), int(self.game.player.x + 100)) \
+                            and y in range(int(self.game.player.y - 100), int(self.game.player.y + 100)):
+                        x = random.randint(0, self.game.canvas.winfo_width())
+                        y = random.randint(0, self.game.canvas.winfo_height())
                     new_enemy.x = x
                     new_enemy.y = y
                     self.game.add_element(new_enemy)
 
                 elif enemy == "ChasingEnemy":
                     new_enemy = ChasingEnemy(self.__game, 20, "red", speed)
-                    new_enemy.x = 100
-                    new_enemy.y = 100
+                    x = random.randint(0, self.game.canvas.winfo_width())
+                    y = random.randint(0, self.game.canvas.winfo_height())
+                    while x in range(int(self.game.player.x - 100), int(self.game.player.x + 100)) \
+                            and y in range(int(self.game.player.y - 100), int(self.game.player.y + 100)):
+                        x = random.randint(0, self.game.canvas.winfo_width())
+                        y = random.randint(0, self.game.canvas.winfo_height())
+                    new_enemy.x = x
+                    new_enemy.y = y
                     self.game.add_element(new_enemy)
 
                 elif enemy == "FencingEnemy":
                     offset = j['offset']
                     new_enemy = FencingEnemy(self.__game, 10, "red", offset, speed)
+                    x = random.randint(self.game.home.x - offset, self.game.home.x + offset)
+                    if x == self.game.home.x - offset or x == self.game.home.x + offset:
+                        y = random.randint(self.game.home.y - offset, self.game.home.y + offset)
+                    else:
+                        y = random.choice([self.game.home.y - offset,self.game.home.y + offset])
+                    new_enemy.x = x
+                    new_enemy.y = y
                     new_enemy.x = self.game.home.x + offset
                     new_enemy.y = self.game.home.y + offset
                     self.game.add_element(new_enemy)
@@ -648,8 +635,14 @@ class EnemyGenerator:
                 elif enemy == "PowerTwoEnemy":
                     cooldown = j['cooldown']
                     new_enemy = PowerTwoEnemy(self.__game, 20, "red", cooldown, speed)
-                    new_enemy.x = 100
-                    new_enemy.y = 100
+                    x = random.randint(0, self.game.canvas.winfo_width())
+                    y = random.randint(0, self.game.canvas.winfo_height())
+                    while x in range(int(self.game.player.x - 100), int(self.game.player.x + 100)) \
+                            and y in range(int(self.game.player.y - 100), int(self.game.player.y + 100)):
+                        x = random.randint(0, self.game.canvas.winfo_width())
+                        y = random.randint(0, self.game.canvas.winfo_height())
+                    new_enemy.x = x
+                    new_enemy.y = y
                     self.game.add_element(new_enemy)
 
 
