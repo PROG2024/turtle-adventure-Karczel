@@ -171,7 +171,7 @@ class Player(TurtleGameElement):
         self.__speed = val
 
     def delete(self) -> None:
-        pass
+        self.canvas.delete(self.__turtle)
 
     def update(self) -> None:
         # check if player has arrived home
@@ -182,7 +182,6 @@ class Player(TurtleGameElement):
                 self.__turtle.goto(50, self.game.screen_height // 2)
                 self.game.level += 1
                 self.game.reset()
-                self.game.init_game()
 
         turtle = self.__turtle
         waypoint = self.game.waypoint
@@ -294,7 +293,7 @@ class DemoEnemy(Enemy):
                            self.y + self.size / 2, )
 
     def delete(self) -> None:
-        pass
+        self.canvas.delete(self.__id)
 
 
 class RandomWalkEnemy(Enemy):
@@ -326,7 +325,7 @@ class RandomWalkEnemy(Enemy):
                            self.y + self.size / 2, )
 
     def delete(self) -> None:
-        pass
+        self.canvas.delete(self.__id)
 
 
 class ChasingEnemy(Enemy):
@@ -395,7 +394,7 @@ class ChasingEnemy(Enemy):
                            self.y + self.size / 2, )
 
     def delete(self) -> None:
-        pass
+        self.canvas.delete(self.__id)
 
 
 class FencingEnemy(Enemy):
@@ -458,7 +457,7 @@ class FencingEnemy(Enemy):
                            self.y + self.size / 2, )
 
     def delete(self) -> None:
-        pass
+        self.canvas.delete(self.__id)
 
 
 class PowerTwoEnemy(Enemy):
@@ -546,7 +545,7 @@ class PowerTwoEnemy(Enemy):
                            self.y + self.size / 2, )
 
     def delete(self) -> None:
-        pass
+        self.canvas.delete(self.__id)
 
     # +detect collision with other enemies
 
@@ -718,7 +717,9 @@ class TurtleAdventureGame(Game):  # pylint: disable=too-many-ancestors
                                 fill="red")
 
     def reset(self):
-        self.canvas.delete("all")
-        print(self.level)
+        for enemy in self.enemies:
+            enemy.delete()
+        self.enemy_generator = EnemyGenerator(self, level=self.level)
+        self.waypoint.deactivate()
 
 f.close()
