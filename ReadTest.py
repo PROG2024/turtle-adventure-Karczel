@@ -13,11 +13,11 @@ data = json.load(f)
 # Iterating through the json
 # list
 for i in data: #iterating through dict, ti get data use data[i]
-    print(i, end=" : \n")
+    print(i, end=" : \n") # i == levels
     for j in data[i]: #iterating through list
-        for k in j:
-            print(k, end=': ')
-            print(j[k])
+        for k in j: # j is 1 element in list
+            print(k, end=': ') #'Enemy'
+            print(j[k]) # info at ; level['Enemy']
         print()
     print()
 

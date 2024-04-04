@@ -5,10 +5,11 @@ adventure game.
 from turtle import RawTurtle
 from gamelib import Game, GameElement
 import json
-
+from datetime import datetime
 
 f = open('Level.json')
 level_data = json.load(f)
+
 
 class TurtleGameElement(GameElement):
     """
@@ -57,8 +58,8 @@ class Waypoint(TurtleGameElement):
             self.canvas.itemconfigure(self.__id2, state="normal")
             self.canvas.tag_raise(self.__id1)
             self.canvas.tag_raise(self.__id2)
-            self.canvas.coords(self.__id1, self.x-10, self.y-10, self.x+10, self.y+10)
-            self.canvas.coords(self.__id2, self.x-10, self.y+10, self.x+10, self.y-10)
+            self.canvas.coords(self.__id1, self.x - 10, self.y - 10, self.x + 10, self.y + 10)
+            self.canvas.coords(self.__id2, self.x - 10, self.y + 10, self.x + 10, self.y - 10)
         else:
             self.canvas.itemconfigure(self.__id1, state="hidden")
             self.canvas.itemconfigure(self.__id2, state="hidden")
@@ -121,17 +122,17 @@ class Home(TurtleGameElement):
 
     def render(self) -> None:
         self.canvas.coords(self.__id,
-                           self.x - self.size/2,
-                           self.y - self.size/2,
-                           self.x + self.size/2,
-                           self.y + self.size/2)
+                           self.x - self.size / 2,
+                           self.y - self.size / 2,
+                           self.x + self.size / 2,
+                           self.y + self.size / 2)
 
     def contains(self, x: float, y: float):
         """
         Check whether home contains the point (x, y).
         """
-        x1, x2 = self.x-self.size/2, self.x+self.size/2
-        y1, y2 = self.y-self.size/2, self.y+self.size/2
+        x1, x2 = self.x - self.size / 2, self.x + self.size / 2
+        y1, y2 = self.y - self.size / 2, self.y + self.size / 2
         return x1 <= x <= x2 and y1 <= y <= y2
 
 
@@ -150,7 +151,7 @@ class Player(TurtleGameElement):
 
     def create(self) -> None:
         turtle = RawTurtle(self.canvas)
-        turtle.getscreen().tracer(False) # disable turtle's built-in animation
+        turtle.getscreen().tracer(False)  # disable turtle's built-in animation
         turtle.shape("turtle")
         turtle.color("green")
         turtle.penup()
@@ -216,10 +217,11 @@ class Enemy(TurtleGameElement):
     def __init__(self,
                  game: "TurtleAdventureGame",
                  size: int,
-                 color: str):
+                 color: str, speed=1):
         super().__init__(game)
         self.__size = size
         self.__color = color
+        self.speed = speed
 
     @property
     def size(self) -> float:
@@ -235,14 +237,17 @@ class Enemy(TurtleGameElement):
         """
         return self.__color
 
+    def speed(self):
+        return self.speed
+
     def hits_player(self):
         """
         Check whether the enemy is hitting the player
         """
         return (
-            (self.x - self.size/2 <= self.game.player.x <= self.x + self.size/2)
-            and
-            (self.y - self.size/2 <= self.game.player.y <= self.y + self.size/2)
+                (self.x - self.size / 2 <= self.game.player.x <= self.x + self.size / 2)
+                and
+                (self.y - self.size / 2 <= self.game.player.y <= self.y + self.size / 2)
         )
 
 
@@ -260,28 +265,29 @@ class DemoEnemy(Enemy):
     def __init__(self,
                  game: "TurtleAdventureGame",
                  size: int,
-                 color: str):
-        super().__init__(game, size, color)
+                 color: str, speed=1):
+        super().__init__(game, size, color, speed)
         self.__id = None
 
     def create(self) -> None:
-        self.__id = self.canvas.create_oval(0,0,0,0, fill="red")
+        self.__id = self.canvas.create_oval(0, 0, 0, 0, fill="red")
 
     def update(self) -> None:
-        self.x += 1
-        self.y += 1
+        self.x += self.speed
+        self.y += self.speed
         if self.hits_player():
             self.game.game_over_lose()
 
     def render(self) -> None:
         self.canvas.coords(self.__id,
-                           self.x - self.size/2,
-                           self.y - self.size/2,
-                           self.x + self.size/2,
-                           self.y + self.size/2,)
+                           self.x - self.size / 2,
+                           self.y - self.size / 2,
+                           self.x + self.size / 2,
+                           self.y + self.size / 2, )
 
     def delete(self) -> None:
         pass
+
 
 class RandomWalkEnemy(Enemy):
     """
@@ -291,41 +297,42 @@ class RandomWalkEnemy(Enemy):
     def __init__(self,
                  game: "TurtleAdventureGame",
                  size: int,
-                 color: str):
-        super().__init__(game, size, color)
+                 color: str, speed):
+        super().__init__(game, size, color, speed)
         self.__id = None
 
     def create(self) -> None:
-        self.__id = self.canvas.create_oval(0,0,0,0, fill=self.color)
+        self.__id = self.canvas.create_oval(0, 0, 0, 0, fill=self.color)
 
     def update(self) -> None:
-        self.x += 1
-        self.y += 1
+        self.x += self.speed
+        self.y += self.speed
         if self.hits_player():
             self.game.game_over_lose()
 
     def render(self) -> None:
         self.canvas.coords(self.__id,
-                           self.x - self.size/2,
-                           self.y - self.size/2,
-                           self.x + self.size/2,
-                           self.y + self.size/2,)
+                           self.x - self.size / 2,
+                           self.y - self.size / 2,
+                           self.x + self.size / 2,
+                           self.y + self.size / 2, )
 
     def delete(self) -> None:
         pass
+
 
 class ChasingEnemy(Enemy):
     """
     Chasing enemy
     """
 
-    #to get a smoother path, store data about player's location and delay to get a smoother output
+    # to get a smoother path, store data about player's location and delay to get a smoother output
 
     def __init__(self,
                  game: "TurtleAdventureGame",
                  size: int,
-                 color: str):
-        super().__init__(game, size, color)
+                 color: str, speed):
+        super().__init__(game, size, color, speed)
         self.__id = None
         if self.game.player.x < self.x:
             self.__state_x = self.state_move_right
@@ -337,32 +344,32 @@ class ChasingEnemy(Enemy):
             self.__state_y = self.state_move_down
 
     def create(self) -> None:
-        self.__id = self.canvas.create_oval(0,0,0,0, fill=self.color)
+        self.__id = self.canvas.create_oval(0, 0, 0, 0, fill=self.color)
 
     def state_move_right(self):
         # self.move_to(self.x + self.speed, self.y)
-        self.x += 1
-        if self.x > self.game.player.x: # hit the right border
+        self.x += self.speed
+        if self.x > self.game.player.x:  # hit the right border
             self.__state_x = self.state_move_left
         # order affects speed of animation,
         # if put if in front the output will be slower
 
     def state_move_left(self):
         # self.move_to(self.x - self.speed, self.y)
-        self.x -= 1
-        if self.x <= self.game.player.x: #hit the left border
+        self.x -= self.speed
+        if self.x <= self.game.player.x:  # hit the left border
             self.__state_x = self.state_move_right
 
     def state_move_up(self):
         # self.move_to(self.x , self.y + self.speed)
-        self.y += 1
-        if self.y > self.game.player.y: #hit the upper border
+        self.y += self.speed
+        if self.y > self.game.player.y:  # hit the upper border
             self.__state_y = self.state_move_down
 
     def state_move_down(self):
-        self.y -= 1
+        self.y -= self.speed
         # self.move_to(self.x, self.y - self.speed)
-        if self.y <= self.game.player.y: #hit the left border
+        if self.y <= self.game.player.y:  # hit the left border
             self.__state_y = self.state_move_up
 
     def update(self) -> None:
@@ -374,13 +381,14 @@ class ChasingEnemy(Enemy):
 
     def render(self) -> None:
         self.canvas.coords(self.__id,
-                           self.x - self.size/2,
-                           self.y - self.size/2,
-                           self.x + self.size/2,
-                           self.y + self.size/2,)
+                           self.x - self.size / 2,
+                           self.y - self.size / 2,
+                           self.x + self.size / 2,
+                           self.y + self.size / 2, )
 
     def delete(self) -> None:
         pass
+
 
 class FencingEnemy(Enemy):
     """
@@ -390,42 +398,42 @@ class FencingEnemy(Enemy):
     def __init__(self,
                  game: "TurtleAdventureGame",
                  size: int,
-                 color: str, offset):
-        super().__init__(game, size, color)
+                 color: str, offset, speed):
+        super().__init__(game, size, color, speed)
         self.__id = None
         self.__move = None
-        self.offset = offset
+        self.__offset = offset
 
     def create(self) -> None:
-        self.__id = self.canvas.create_oval(0,0,0,0, fill=self.color)
+        self.__id = self.canvas.create_oval(0, 0, 0, 0, fill=self.color)
 
     def right(self):
-        self.x += 1
+        self.x += self.speed
 
     def left(self):
-        self.x -= 1
+        self.x -= self.speed
 
     def up(self):
-        self.y += 1
+        self.y += self.speed
 
     def down(self):
-        self.y -= 1
+        self.y -= self.speed
 
     def move_till(self):
-        if self.x == self.game.home.x + self.offset \
-                and self.y == self.game.home.y + self.offset:
+        if self.x == self.game.home.x + self.__offset \
+                and self.y == self.game.home.y + self.__offset:
             self.__move = self.down
 
-        if self.x == self.game.home.x + self.offset \
-                and self.y == self.game.home.y - self.offset:
+        if self.x == self.game.home.x + self.__offset \
+                and self.y == self.game.home.y - self.__offset:
             self.__move = self.left
 
-        if self.x == self.game.home.x - self.offset \
-                and self.y == self.game.home.y - self.offset:
+        if self.x == self.game.home.x - self.__offset \
+                and self.y == self.game.home.y - self.__offset:
             self.__move = self.up
 
-        if self.x == self.game.home.x - self.offset \
-                and self.y == self.game.home.y + self.offset:
+        if self.x == self.game.home.x - self.__offset \
+                and self.y == self.game.home.y + self.__offset:
             self.__move = self.right
         self.__move()
 
@@ -436,15 +444,16 @@ class FencingEnemy(Enemy):
 
     def render(self) -> None:
         self.canvas.coords(self.__id,
-                           self.x - self.size/2,
-                           self.y - self.size/2,
-                           self.x + self.size/2,
-                           self.y + self.size/2,)
+                           self.x - self.size / 2,
+                           self.y - self.size / 2,
+                           self.x + self.size / 2,
+                           self.y + self.size / 2, )
 
     def delete(self) -> None:
         pass
 
-class MyEnemy(Enemy):
+
+class PowerTwoEnemy(Enemy):
     """
     My enemy (1)
 
@@ -455,28 +464,83 @@ class MyEnemy(Enemy):
     def __init__(self,
                  game: "TurtleAdventureGame",
                  size: int,
-                 color: str):
-        super().__init__(game, size, color)
+                 color: str,cooldown, speed):
+        super().__init__(game, size, color, speed)
         self.__id = None
+        self.__time = datetime.now().timestamp()
+        if self.game.player.x < self.x:
+            self.__state_x = self.state_move_right
+        else:
+            self.__state_x = self.state_move_left
+        if self.game.player.y < self.y:
+            self.__state_y = self.state_move_up
+        else:
+            self.__state_y = self.state_move_down
+        self.__cooldown = cooldown
 
     def create(self) -> None:
-        self.__id = self.canvas.create_oval(0,0,0,0, fill=self.color)
+        self.__id = self.canvas.create_oval(0, 0, 0, 0, fill=self.color)
+
+    def state_move_right(self):
+        # self.move_to(self.x + self.speed, self.y)
+        self.x += self.speed
+        if self.x > self.game.player.x:  # hit the right border
+            self.__state_x = self.state_move_left
+        # order affects speed of animation,
+        # if put if in front the output will be slower
+
+    def state_move_left(self):
+        # self.move_to(self.x - self.speed, self.y)
+        self.x -= self.speed
+        if self.x <= self.game.player.x:  # hit the left border
+            self.__state_x = self.state_move_right
+
+    def state_move_up(self):
+        # self.move_to(self.x , self.y + self.speed)
+        self.y += self.speed
+        if self.y > self.game.player.y:  # hit the upper border
+            self.__state_y = self.state_move_down
+
+    def state_move_down(self):
+        self.y -= self.speed
+        # self.move_to(self.x, self.y - self.speed)
+        if self.y <= self.game.player.y:  # hit the left border
+            self.__state_y = self.state_move_up
 
     def update(self) -> None:
-        self.x += 1
-        self.y += 1
+        self.__state_x()
+        self.__state_y()
+        if (datetime.now().timestamp()-self.__time) >= self.__cooldown:
+            new_enemy = PowerTwoEnemy(self.game, self.size, self.color, self.__cooldown, self.speed)
+            #I wanted it to be directly behind the original enemy, but good enough
+            if self.game.player.x - self.x < 0:
+                new_enemy.x = self.x + 50
+            elif self.game.player.x - self.x == 0:
+                new_enemy.x = self.x
+            else:
+                new_enemy.x = self.x - 50
+            if self.game.player.y - self.y < 0:
+                new_enemy.y = self.y + 50
+            elif self.game.player.y - self.y == 0:
+                new_enemy.x = self.y
+            else:
+                new_enemy.y = self.y - 50
+            self.game.add_element(new_enemy)
+            self.__time = datetime.now().timestamp()
         if self.hits_player():
             self.game.game_over_lose()
 
     def render(self) -> None:
         self.canvas.coords(self.__id,
-                           self.x - self.size/2,
-                           self.y - self.size/2,
-                           self.x + self.size/2,
-                           self.y + self.size/2,)
+                           self.x - self.size / 2,
+                           self.y - self.size / 2,
+                           self.x + self.size / 2,
+                           self.y + self.size / 2, )
 
     def delete(self) -> None:
         pass
+
+    # +detect collision with other enemies
 
 # TODO
 # Complete the EnemyGenerator class by inserting code to generate enemies
@@ -524,20 +588,72 @@ class EnemyGenerator:
         #     new_enemy.x = 100
         #     new_enemy.y = 100
         #     self.game.add_element(new_enemy)
-        offset = 10
-        new_enemy = FencingEnemy(self.__game, 10, "red", offset)
-        new_enemy.x = self.game.home.x + offset
-        new_enemy.y = self.game.home.y + offset
+        # offset = 10
+        # new_enemy = FencingEnemy(self.__game, 10, "red", offset)
+        # new_enemy.x = self.game.home.x + offset
+        # new_enemy.y = self.game.home.y + offset
+        # self.game.add_element(new_enemy)
+        #
+        # offset = 50
+        # new_enemy = FencingEnemy(self.__game, 10, "red", offset)
+        # new_enemy.x = self.game.home.x + offset
+        # new_enemy.y = self.game.home.y + offset
+        # self.game.add_element(new_enemy)
+
+        new_enemy = PowerTwoEnemy(self.__game, 20, "red", 5, 1)
+        new_enemy.x = 100
+        new_enemy.y = 100
         self.game.add_element(new_enemy)
 
-        offset = 50
-        new_enemy = FencingEnemy(self.__game, 10, "red", offset)
-        new_enemy.x = self.game.home.x + offset
-        new_enemy.y = self.game.home.y + offset
-        self.game.add_element(new_enemy)
+        for i in level_data:  # iterating through dict, ti get data use data[i]
+            print(i, end=" : \n")
+            for j in level_data[i]:  # iterating through list
+                for k in j: #j == 1 element of level list
+                    print(k, end=': ')
+                    print(j[k])
+                print()
+            print()
+
+        level = level_data[str(self.__level)]
+        for j in level:
+            enemy = j['Enemy']
+            speed = j['speed']
+            spawn = j['spawn']
+            for i in spawn:
+                if enemy == "RandomWalkEnemy":
+                    new_enemy = RandomWalkEnemy(self.__game, 20, "red", speed)
+                    x = randint()
+                    y = randint()
+                    while x in range(self.game.player.x)
+                        and y in range(self.game.player.y):
+                        x = randint()
+                        y = randint()
+                    new_enemy.x = x
+                    new_enemy.y = y
+                    self.game.add_element(new_enemy)
+
+                elif enemy == "ChasingEnemy":
+                    new_enemy = ChasingEnemy(self.__game, 20, "red", speed)
+                    new_enemy.x = 100
+                    new_enemy.y = 100
+                    self.game.add_element(new_enemy)
+
+                elif enemy == "FencingEnemy":
+                    offset = j['offset']
+                    new_enemy = FencingEnemy(self.__game, 10, "red", offset, speed)
+                    new_enemy.x = self.game.home.x + offset
+                    new_enemy.y = self.game.home.y + offset
+                    self.game.add_element(new_enemy)
+
+                elif enemy == "PowerTwoEnemy":
+                    cooldown = j['cooldown']
+                    new_enemy = PowerTwoEnemy(self.__game, 20, "red", cooldown, speed)
+                    new_enemy.x = 100
+                    new_enemy.y = 100
+                    self.game.add_element(new_enemy)
 
 
-class TurtleAdventureGame(Game): # pylint: disable=too-many-ancestors
+class TurtleAdventureGame(Game):  # pylint: disable=too-many-ancestors
     """
     The main class for Turtle's Adventure.
     """
@@ -558,11 +674,11 @@ class TurtleAdventureGame(Game): # pylint: disable=too-many-ancestors
         self.canvas.config(width=self.screen_width, height=self.screen_height)
         turtle = RawTurtle(self.canvas)
         # set turtle screen's origin to the top-left corner
-        turtle.screen.setworldcoordinates(0, self.screen_height-1, self.screen_width-1, 0)
+        turtle.screen.setworldcoordinates(0, self.screen_height - 1, self.screen_width - 1, 0)
 
         self.waypoint = Waypoint(self)
         self.add_element(self.waypoint)
-        self.home = Home(self, (self.screen_width-100, self.screen_height//2), 20)
+        self.home = Home(self, (self.screen_width - 100, self.screen_height // 2), 20)
         self.add_element(self.home)
         self.player = Player(self, turtle)
         self.add_element(self.player)
@@ -571,7 +687,7 @@ class TurtleAdventureGame(Game): # pylint: disable=too-many-ancestors
         self.enemy_generator = EnemyGenerator(self, level=self.level)
 
         self.player.x = 50
-        self.player.y = self.screen_height//2
+        self.player.y = self.screen_height // 2
 
     def add_enemy(self, enemy: Enemy) -> None:
         """
@@ -586,8 +702,8 @@ class TurtleAdventureGame(Game): # pylint: disable=too-many-ancestors
         """
         self.stop()
         font = ("Arial", 36, "bold")
-        self.canvas.create_text(self.screen_width/2,
-                                self.screen_height/2,
+        self.canvas.create_text(self.screen_width / 2,
+                                self.screen_height / 2,
                                 text="You Win",
                                 font=font,
                                 fill="green")
@@ -598,10 +714,11 @@ class TurtleAdventureGame(Game): # pylint: disable=too-many-ancestors
         """
         self.stop()
         font = ("Arial", 36, "bold")
-        self.canvas.create_text(self.screen_width/2,
-                                self.screen_height/2,
+        self.canvas.create_text(self.screen_width / 2,
+                                self.screen_height / 2,
                                 text="You Lose",
                                 font=font,
                                 fill="red")
+
 
 f.close()
