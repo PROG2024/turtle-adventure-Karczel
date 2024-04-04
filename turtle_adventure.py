@@ -171,7 +171,7 @@ class Player(TurtleGameElement):
         self.__speed = val
 
     def delete(self) -> None:
-        self.canvas.delete(self.__turtle)
+        pass
 
     def update(self) -> None:
         # check if player has arrived home
@@ -307,13 +307,41 @@ class RandomWalkEnemy(Enemy):
                  color: str, speed):
         super().__init__(game, size, color, speed)
         self.__id = None
+        self.__state_x = self.state_move_right
+        self.__state_y = self.state_move_down
 
     def create(self) -> None:
         self.__id = self.canvas.create_oval(0, 0, 0, 0, fill=self.color)
 
+    def move_to(self, x, y):
+        self.x = x
+        self.y = y
+
+    def state_move_right(self):
+        self.move_to(self.x + self.speed, self.y)
+        if self.x > self.canvas.winfo_width():  # hit the right border
+            self.__state_x = self.state_move_left
+        # order affects speed of animation,
+        # if put if in front the output will be slower
+
+    def state_move_left(self):
+        self.move_to(self.x - self.speed, self.y)
+        if self.x < 0:  # hit the left border
+            self.__state_x = self.state_move_right
+
+    def state_move_up(self):
+        self.move_to(self.x, self.y + self.speed)
+        if self.y > self.canvas.winfo_height():  # hit the upper border
+            self.__state_y = self.state_move_down
+
+    def state_move_down(self):
+        self.move_to(self.x, self.y - self.speed)
+        if self.y < 0:  # hit the left border
+            self.__state_y = self.state_move_up
+
     def update(self) -> None:
-        self.x += self.speed
-        self.y += self.speed
+        self.__state_x()  # call as a function
+        self.__state_y()
         if self.hits_player():
             self.game.game_over_lose()
 
@@ -606,7 +634,6 @@ class EnemyGenerator:
                         y = random.randint(0, self.game.canvas.winfo_height())
                     new_enemy.x = x
                     new_enemy.y = y
-                    self.game.add_element(new_enemy)
 
                 elif enemy == "ChasingEnemy":
                     new_enemy = ChasingEnemy(self.__game, 20, "red", speed)
@@ -618,7 +645,6 @@ class EnemyGenerator:
                         y = random.randint(0, self.game.canvas.winfo_height())
                     new_enemy.x = x
                     new_enemy.y = y
-                    self.game.add_element(new_enemy)
 
                 elif enemy == "FencingEnemy":
                     offset = j['offset']
@@ -628,11 +654,8 @@ class EnemyGenerator:
                         y = random.randint(self.game.home.y - offset, self.game.home.y + offset)
                     else:
                         y = random.choice([self.game.home.y - offset,self.game.home.y + offset])
-                    new_enemy.x = x
-                    new_enemy.y = y
                     new_enemy.x = self.game.home.x + offset
                     new_enemy.y = self.game.home.y + offset
-                    self.game.add_element(new_enemy)
 
                 elif enemy == "PowerTwoEnemy":
                     cooldown = j['cooldown']
@@ -645,7 +668,8 @@ class EnemyGenerator:
                         y = random.randint(0, self.game.canvas.winfo_height())
                     new_enemy.x = x
                     new_enemy.y = y
-                    self.game.add_element(new_enemy)
+                self.game.add_element(new_enemy)
+                self.game.enemies.append(new_enemy)
 
 
 class TurtleAdventureGame(Game):  # pylint: disable=too-many-ancestors
