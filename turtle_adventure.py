@@ -177,10 +177,13 @@ class Player(TurtleGameElement):
         # check if player has arrived home
         if self.game.home.contains(self.x, self.y):
             if self.game.level > 10:
-                self.game.level += 1
-            else:
                 self.game.game_over_win()
-                
+            else:
+                self.game.level +=1
+                self.game.reset()
+                self.game.init_game()
+                self.__turtle.goto(50, self.game.screen_height//2)
+
         turtle = self.__turtle
         waypoint = self.game.waypoint
         if self.game.waypoint.is_active:
@@ -682,6 +685,7 @@ class TurtleAdventureGame(Game):  # pylint: disable=too-many-ancestors
         self.player.x = 50
         self.player.y = self.screen_height // 2
 
+
     def add_enemy(self, enemy: Enemy) -> None:
         """
         Add a new enemy into the current game
@@ -713,5 +717,7 @@ class TurtleAdventureGame(Game):  # pylint: disable=too-many-ancestors
                                 font=font,
                                 fill="red")
 
+    def reset(self):
+        self.canvas.delete("all")
 
 f.close()
