@@ -31,14 +31,14 @@
     {"Enemy":"RandomWalkEnemy", "speed":2, "spawn": 1},
     {"Enemy":"ChasingEnemy", "speed":2, "spawn": 1},
     {"Enemy":"FencingEnemy", "speed":2, "spawn": 1, "offset": 50},
-    {"Enemy":"PowerTwoEnemy", "speed":2, "spawn": 1, "cooldown": 10}
+    {"Enemy":"PowerTwoEnemy", "speed":2, "spawn": 1, "cooldown": 8}
 
   ],
   "8" : [
     {"Enemy":"RandomWalkEnemy", "speed":2, "spawn": 1},
     {"Enemy":"ChasingEnemy", "speed":2, "spawn": 1},
     {"Enemy":"FencingEnemy", "speed":2, "spawn": 2, "offset": 50},
-    {"Enemy":"PowerTwoEnemy", "speed":2, "spawn": 1, "cooldown": 10}
+    {"Enemy":"PowerTwoEnemy", "speed":2, "spawn": 1, "cooldown": 8}
   ],
   "9" : [
     {"Enemy":"RandomWalkEnemy", "speed":2, "spawn": 1},

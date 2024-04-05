@@ -4,7 +4,7 @@
 import json
 
 # Opening JSON file
-f = open('Level.json')
+f = open('../Level.json')
 
 # returns JSON object as
 # a dictionary
