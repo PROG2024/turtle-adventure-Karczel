@@ -176,7 +176,6 @@ class Player(TurtleGameElement):
     def update(self) -> None:
         # check if player has arrived home
         if self.game.home.contains(self.x, self.y):
-            print(self.game.enemies)
             if self.game.level >= 10:
                 self.game.game_over_win()
             else:
@@ -482,11 +481,6 @@ class FencingEnemy(Enemy):
     def update(self) -> None:
         self.__move = self.move_till()
         self.__move()
-        print(self.__move)
-        print(self.game.home.x)
-        print(self.game.home.y)
-        print(self.x)
-        print(self.y)
         if self.hits_player():
             self.game.game_over_lose()
 
@@ -636,9 +630,9 @@ class EnemyGenerator:
             enemy = j['Enemy']
             speed = j['speed']
             spawn = j['spawn']
-            for i in range(spawn+1):
+            for i in range(spawn):
                 if enemy == "RandomWalkEnemy":
-                    new_enemy = RandomWalkEnemy(self.__game, 20, "red", speed)
+                    new_enemy = RandomWalkEnemy(self.__game, 20, "deep sky blue", speed)
                     x = random.randint(0, self.game.canvas.winfo_width())
                     y = random.randint(0, self.game.canvas.winfo_height())
                     while x in range(int(self.game.player.x - 100), int(self.game.player.x + 100)) \
@@ -651,7 +645,7 @@ class EnemyGenerator:
                     self.game.enemies.append(new_enemy)
 
                 elif enemy == "ChasingEnemy":
-                    new_enemy = ChasingEnemy(self.__game, 20, "red", speed)
+                    new_enemy = ChasingEnemy(self.__game, 20, "deep pink", speed)
                     x = random.randint(0, self.game.canvas.winfo_width())
                     y = random.randint(0, self.game.canvas.winfo_height())
                     while x in range(int(self.game.player.x - 100), int(self.game.player.x + 100)) \
@@ -678,7 +672,7 @@ class EnemyGenerator:
 
                 elif enemy == "PowerTwoEnemy":
                     cooldown = j['cooldown']
-                    new_enemy = PowerTwoEnemy(self.__game, 20, "red", cooldown, speed)
+                    new_enemy = PowerTwoEnemy(self.__game, 20, "lawn green", cooldown, speed)
                     x = random.randint(0, self.game.canvas.winfo_width())
                     y = random.randint(0, self.game.canvas.winfo_height())
                     while x in range(int(self.game.player.x - 100), int(self.game.player.x + 100)) \
