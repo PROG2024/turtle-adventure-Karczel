@@ -179,9 +179,7 @@ class Player(TurtleGameElement):
             if self.game.level > 10:
                 self.game.game_over_win()
             else:
-                self.__turtle.goto(50, self.game.screen_height // 2)
-                self.game.level += 1
-                self.game.reset()
+                self.game.next_level()
 
         turtle = self.__turtle
         waypoint = self.game.waypoint
@@ -740,7 +738,10 @@ class TurtleAdventureGame(Game):  # pylint: disable=too-many-ancestors
                                 font=font,
                                 fill="red")
 
-    def reset(self):
+    def next_level(self):
+        self.player.x = 50
+        self.player.y = self.screen_height // 2
+        self.level += 1
         for enemy in self.enemies:
             self.delete_element(enemy)
         self.enemies.clear()
