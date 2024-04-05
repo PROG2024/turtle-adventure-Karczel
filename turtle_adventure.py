@@ -14,7 +14,7 @@ level_data = json.load(f)
 
 class TurtleGameElement(GameElement):
     """
-    An abstract class representing all game elemnets related to the Turtle's
+    An abstract class representing all game elements related to the Turtle's
     Adventure game
     """
 
@@ -742,7 +742,8 @@ class TurtleAdventureGame(Game):  # pylint: disable=too-many-ancestors
 
     def reset(self):
         for enemy in self.enemies:
-            enemy.delete()
+            self.delete_element(enemy)
+        self.enemies.clear()
         self.enemy_generator = EnemyGenerator(self, level=self.level)
         self.waypoint.deactivate()
 
