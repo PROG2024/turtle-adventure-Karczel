@@ -176,7 +176,8 @@ class Player(TurtleGameElement):
     def update(self) -> None:
         # check if player has arrived home
         if self.game.home.contains(self.x, self.y):
-            if self.game.level > 10:
+            print(self.game.enemies)
+            if self.game.level >= 10:
                 self.game.game_over_win()
             else:
                 self.game.next_level()
@@ -453,25 +454,39 @@ class FencingEnemy(Enemy):
         self.y -= self.speed
 
     def move_till(self):
-        if self.x == self.game.home.x + self.__offset \
-                and self.y == self.game.home.y + self.__offset:
-            self.__move = self.down
+        if self.x >= self.game.home.x + self.__offset \
+                and self.y >= self.game.home.y + self.__offset:
+            return self.down
 
-        if self.x == self.game.home.x + self.__offset \
-                and self.y == self.game.home.y - self.__offset:
-            self.__move = self.left
+        if self.x >= self.game.home.x + self.__offset \
+                and self.y <= self.game.home.y - self.__offset:
+            return self.left
 
-        if self.x == self.game.home.x - self.__offset \
-                and self.y == self.game.home.y - self.__offset:
-            self.__move = self.up
+        if self.x <= self.game.home.x - self.__offset \
+                and self.y <= self.game.home.y - self.__offset:
+            return self.up
 
-        if self.x == self.game.home.x - self.__offset \
-                and self.y == self.game.home.y + self.__offset:
-            self.__move = self.right
-        self.__move()
+        if self.x <= self.game.home.x - self.__offset \
+                and self.y >= self.game.home.y + self.__offset:
+            return self.right
+
+        if self.x >= self.game.home.x + self.__offset:
+            return self.down
+        if self.x <= self.game.home.x - self.__offset:
+            return self.up
+        if self.y >= self.game.home.y + self.__offset:
+            return self.right
+        if self.y <= self.game.home.y - self.__offset:
+            return self.left
 
     def update(self) -> None:
-        self.move_till()
+        self.__move = self.move_till()
+        self.__move()
+        print(self.__move)
+        print(self.game.home.x)
+        print(self.game.home.y)
+        print(self.x)
+        print(self.y)
         if self.hits_player():
             self.game.game_over_lose()
 
@@ -621,7 +636,7 @@ class EnemyGenerator:
             enemy = j['Enemy']
             speed = j['speed']
             spawn = j['spawn']
-            for i in range(spawn):
+            for i in range(spawn+1):
                 if enemy == "RandomWalkEnemy":
                     new_enemy = RandomWalkEnemy(self.__game, 20, "red", speed)
                     x = random.randint(0, self.game.canvas.winfo_width())
@@ -632,6 +647,8 @@ class EnemyGenerator:
                         y = random.randint(0, self.game.canvas.winfo_height())
                     new_enemy.x = x
                     new_enemy.y = y
+                    self.game.add_element(new_enemy)
+                    self.game.enemies.append(new_enemy)
 
                 elif enemy == "ChasingEnemy":
                     new_enemy = ChasingEnemy(self.__game, 20, "red", speed)
@@ -643,17 +660,21 @@ class EnemyGenerator:
                         y = random.randint(0, self.game.canvas.winfo_height())
                     new_enemy.x = x
                     new_enemy.y = y
+                    self.game.add_element(new_enemy)
+                    self.game.enemies.append(new_enemy)
 
                 elif enemy == "FencingEnemy":
                     offset = j['offset']
                     new_enemy = FencingEnemy(self.__game, 10, "red", offset, speed)
-                    x = random.randint(self.game.home.x - offset, self.game.home.x + offset)
+                    x = random.randrange(self.game.home.x - offset, self.game.home.x + offset)
                     if x == self.game.home.x - offset or x == self.game.home.x + offset:
-                        y = random.randint(self.game.home.y - offset, self.game.home.y + offset)
+                        y = random.randrange(self.game.home.y - offset, self.game.home.y + offset)
                     else:
                         y = random.choice([self.game.home.y - offset,self.game.home.y + offset])
-                    new_enemy.x = self.game.home.x + offset
-                    new_enemy.y = self.game.home.y + offset
+                    new_enemy.x = x
+                    new_enemy.y = y
+                    self.game.add_element(new_enemy)
+                    self.game.enemies.append(new_enemy)
 
                 elif enemy == "PowerTwoEnemy":
                     cooldown = j['cooldown']
@@ -666,8 +687,8 @@ class EnemyGenerator:
                         y = random.randint(0, self.game.canvas.winfo_height())
                     new_enemy.x = x
                     new_enemy.y = y
-                self.game.add_element(new_enemy)
-                self.game.enemies.append(new_enemy)
+                    self.game.add_element(new_enemy)
+                    self.game.enemies.append(new_enemy)
 
 
 class TurtleAdventureGame(Game):  # pylint: disable=too-many-ancestors
