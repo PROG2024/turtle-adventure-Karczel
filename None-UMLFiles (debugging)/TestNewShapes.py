@@ -8,7 +8,7 @@ frame.pack()
 canvas = tk.Canvas(frame, width=500, height=400, background="gray75")
 canvas.pack()
 
-img = Image.open("PowerTwo.png")
+img = Image.open("../PowerTwo.png")
 imgtk = ImageTk.PhotoImage(img)
 canvas.create_image(0, 0, image=imgtk)
 

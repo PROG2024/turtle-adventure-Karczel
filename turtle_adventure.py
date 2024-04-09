@@ -7,6 +7,7 @@ from gamelib import Game, GameElement
 import json
 from datetime import datetime
 import random
+from PIL import Image, ImageTk
 
 f = open('Level.json')
 level_data = json.load(f)
@@ -521,7 +522,12 @@ class PowerTwoEnemy(Enemy):
         self.__cooldown = cooldown
 
     def create(self) -> None:
+        # img = Image.open("PowerTwo.png")
+        # resized_image = img.resize((self.size, self.size))
+        # imgtk = ImageTk.PhotoImage(resized_image)
+        # self.__id = self.canvas.create_image(0,0,image = imgtk)
         self.__id = self.canvas.create_oval(0, 0, 0, 0, fill=self.color)
+
 
     def state_move_right(self):
         # self.move_to(self.x + self.speed, self.y)
@@ -570,7 +576,6 @@ class PowerTwoEnemy(Enemy):
                 new_enemy.y = self.y - 50
             self.game.add_element(new_enemy)
             self.game.enemies.append(new_enemy)
-            # self.__time = datetime.now().timestamp()
         if self.hits_player():
             self.game.game_over_lose()
 
