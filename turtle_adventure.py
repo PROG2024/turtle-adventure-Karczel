@@ -7,9 +7,13 @@ from gamelib import Game, GameElement
 import json
 from datetime import datetime
 import random
+from PIL import Image, ImageTk
 
 f = open('Level.json')
 level_data = json.load(f)
+
+img = Image.open("PowerTwo.png")
+imgtk = ImageTk.PhotoImage(img)
 
 
 class TurtleGameElement(GameElement):
@@ -256,12 +260,6 @@ class Enemy(TurtleGameElement):
         )
 
 
-# TODO
-# * Define your enemy classes
-# * Implement all methods required by the GameElement abstract class
-# * Define enemy's update logic in the update() method
-# * Check whether the player hits this enemy, then call the
-#   self.game.game_over_lose() method in the TurtleAdventureGame class.
 class DemoEnemy(Enemy):
     """
     Demo enemy
@@ -420,7 +418,7 @@ class ChasingEnemy(Enemy):
                            self.y + self.size / 2, )
 
     def delete(self) -> None:
-        self.canvas.delete(self.__id)
+        self.game.delete_element(self)
 
 
 class FencingEnemy(Enemy):
@@ -492,7 +490,7 @@ class FencingEnemy(Enemy):
                            self.y + self.size / 2, )
 
     def delete(self) -> None:
-        self.canvas.delete(self.__id)
+        self.game.delete_element(self)
 
 
 class PowerTwoEnemy(Enemy):
@@ -521,7 +519,7 @@ class PowerTwoEnemy(Enemy):
         self.__cooldown = cooldown
 
     def create(self) -> None:
-        self.__id = self.canvas.create_oval(0, 0, 0, 0, fill=self.color)
+        self.__id = self.canvas.create_image(50, 50, image=imgtk)
 
     def state_move_right(self):
         # self.move_to(self.x + self.speed, self.y)
@@ -580,18 +578,8 @@ class PowerTwoEnemy(Enemy):
                            self.y + self.size / 2, )
 
     def delete(self) -> None:
-        self.canvas.delete(self.__id)
+        self.game.delete_element(self)
 
-    # +detect collision with other enemies
-
-
-# TODO
-# Complete the EnemyGenerator class by inserting code to generate enemies
-# based on the given game level; call TurtleAdventureGame's add_enemy() method
-# to add enemies to the game at certain points in time.
-#
-# Hint: the 'game' parameter is a tkinter's frame, so it's after()
-# method can be used to schedule some future events.
 
 class EnemyGenerator:
     """
