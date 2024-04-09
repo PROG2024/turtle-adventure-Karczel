@@ -552,7 +552,7 @@ class PowerTwoEnemy(Enemy):
     def update(self) -> None:
         self.__state_x()
         self.__state_y()
-        if (datetime.now().timestamp() - self.__time) >= self.__cooldown:
+        if len(self.game.enemies) <= 30 and (datetime.now().timestamp() - self.__time) >= self.__cooldown:
             self.__time = datetime.now().timestamp()
             new_enemy = PowerTwoEnemy(self.game, self.size, self.color, self.__cooldown, self.speed)
             # I wanted it to be directly behind the original enemy, but good enough
