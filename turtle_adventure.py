@@ -553,6 +553,7 @@ class PowerTwoEnemy(Enemy):
         self.__state_x()
         self.__state_y()
         if (datetime.now().timestamp() - self.__time) >= self.__cooldown:
+            self.__time = datetime.now().timestamp()
             new_enemy = PowerTwoEnemy(self.game, self.size, self.color, self.__cooldown, self.speed)
             # I wanted it to be directly behind the original enemy, but good enough
             if self.game.player.x - self.x < 0:
@@ -568,7 +569,8 @@ class PowerTwoEnemy(Enemy):
             else:
                 new_enemy.y = self.y - 50
             self.game.add_element(new_enemy)
-            self.__time = datetime.now().timestamp()
+            self.game.enemies.append(new_enemy)
+            # self.__time = datetime.now().timestamp()
         if self.hits_player():
             self.game.game_over_lose()
 
