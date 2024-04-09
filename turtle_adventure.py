@@ -522,11 +522,11 @@ class PowerTwoEnemy(Enemy):
         self.__cooldown = cooldown
 
     def create(self) -> None:
-        # img = Image.open("PowerTwo.png")
-        # resized_image = img.resize((self.size, self.size))
-        # imgtk = ImageTk.PhotoImage(resized_image)
-        # self.__id = self.canvas.create_image(0,0,image = imgtk)
-        self.__id = self.canvas.create_oval(0, 0, 0, 0, fill=self.color)
+        self.__img = Image.open("PowerTwo.png")
+        self.__resized_image = self.__img.resize((self.size, self.size))
+        self.__imgtk = ImageTk.PhotoImage(self.__resized_image)
+        self.__id = self.canvas.create_image(0,0,image = self.__imgtk)
+        # self.__id = self.canvas.create_oval(0, 0, 0, 0, fill=self.color)
 
 
     def state_move_right(self):
@@ -581,10 +581,9 @@ class PowerTwoEnemy(Enemy):
 
     def render(self) -> None:
         self.canvas.coords(self.__id,
-                           self.x - self.size / 2,
-                           self.y - self.size / 2,
-                           self.x + self.size / 2,
-                           self.y + self.size / 2, )
+                           self.x,
+                           self.y
+                           )
 
     def delete(self) -> None:
         self.canvas.delete(self.__id)
@@ -670,7 +669,7 @@ class EnemyGenerator:
 
                 elif enemy == "PowerTwoEnemy":
                     cooldown = j['cooldown']
-                    new_enemy = PowerTwoEnemy(self.__game, 20, "lawn green", cooldown, speed)
+                    new_enemy = PowerTwoEnemy(self.__game, 50, "lawn green", cooldown, speed)
                     x = random.randint(0, self.game.canvas.winfo_width())
                     y = random.randint(0, self.game.canvas.winfo_height())
                     while x in range(int(self.game.player.x - 100), int(self.game.player.x + 100)) \
