@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../auction-testing-Karczel/.idea/auction-testing-Karczel.iml" filepath="$PROJECT_DIR$/../auction-testing-Karczel/.idea/auction-testing-Karczel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../lab9-Karczel/.idea/lab9-Karczel.iml" filepath="$PROJECT_DIR$/../lab9-Karczel/.idea/lab9-Karczel.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/turtle-adventure-Karczel.iml" filepath="$PROJECT_DIR$/.idea/turtle-adventure-Karczel.iml" />
     </modules>
   </component>

@@ -4,6 +4,8 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="auction-testing-Karczel" />
+    <orderEntry type="module" module-name="lab9-Karczel" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />
